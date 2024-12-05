@@ -18,6 +18,11 @@ const bookingSchema = new mongoose.Schema({
     enum: ['pending', 'paid', 'refunded'],
     default: 'pending'
   },
+  paymentMethod: {
+    type: String,
+    enum: ['cash payment', 'paypal', 'stripe'], // Allowed payment methods
+    required: true // Make it mandatory to specify a payment method
+  },
   paymentIntent: {
     stripePaymentIntentId: String,
     paypalOrderId: String,
