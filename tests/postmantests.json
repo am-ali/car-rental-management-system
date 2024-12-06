@@ -1,0 +1,523 @@
+{
+    "info": {
+        "name": "Admin Panel API",
+        "_postman_id": "d8e8fca2-dc0f-4f44-94b3-16b92740efc8",
+        "description": "Postman collection for testing Admin Panel API endpoints.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Car Management",
+            "item": [
+                {
+                    "name": "Add new car",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"make\": \"Toyota\",\n    \"model\": \"Camry\",\n    \"year\": 2023,\n    \"category\": \"CATEGORY_ID_HERE\",\n    \"licensePlate\": \"ABC123\",\n    \"branch\": \"BRANCH_ID_HERE\",\n    \"dailyRate\": 50,\n    \"transmission\": \"automatic\",\n    \"features\": [\"GPS\", \"Bluetooth\", \"Backup Camera\"],\n    \"mileage\": 5000\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/cars",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["cars"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get all cars",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/cars",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["cars"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get car by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/cars/CAR_ID_HERE",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["cars", "CAR_ID_HERE"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update car",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"dailyRate\": 55,\n    \"status\": \"maintenance\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/cars/CAR_ID_HERE",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["cars", "CAR_ID_HERE"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete car",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/cars/CAR_ID_HERE",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["cars", "CAR_ID_HERE"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Category Management",
+            "item": [
+                {
+                    "name": "Add new category",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Luxury\",\n    \"description\": \"Premium luxury vehicles\",\n    \"basePrice\": 100\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/categories",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["categories"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get all categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/categories",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["categories"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update category",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"basePrice\": 120,\n    \"description\": \"Updated luxury vehicle description\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/categories/CATEGORY_ID_HERE",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["categories", "CATEGORY_ID_HERE"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete category",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/categories/CATEGORY_ID_HERE",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["categories", "CATEGORY_ID_HERE"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Branch Management",
+            "item": [
+              {
+                "name": "Add new branch",
+                "request": {
+                  "method": "POST",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Downtown Branch\",\n    \"address\": \"123 Main Street\",\n    \"city\": \"New York\",\n    \"contactNumber\": \"+1234567890\",\n    \"email\": \"downtown@carental.com\",\n    \"coordinates\": {\n        \"latitude\": 40.7128,\n        \"longitude\": -74.0060\n    }\n}"
+                  },
+                  "url": {
+                    "raw": "{{baseUrl}}/branches",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["branches"]
+                  }
+                }
+              },
+              {
+                "name": "Get all branches",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{baseUrl}}/branches",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["branches"]
+                  }
+                }
+              },
+              {
+                "name": "Get branch by ID",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{baseUrl}}/branches/BRANCH_ID_HERE",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["branches", "BRANCH_ID_HERE"]
+                  }
+                }
+              },
+              {
+                "name": "Update branch",
+                "request": {
+                  "method": "PUT",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"contactNumber\": \"+1987654321\",\n    \"email\": \"downtown.new@carental.com\"\n}"
+                  },
+                  "url": {
+                    "raw": "{{baseUrl}}/branches/BRANCH_ID_HERE",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["branches", "BRANCH_ID_HERE"]
+                  }
+                }
+              },
+              {
+                "name": "Delete branch",
+                "request": {
+                  "method": "DELETE",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{baseUrl}}/branches/BRANCH_ID_HERE",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["branches", "BRANCH_ID_HERE"]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "Staff Management",
+            "item": [
+              {
+                "name": "Add new staff",
+                "request": {
+                  "method": "POST",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe@carental.com\",\n    \"password\": \"password123\",\n    \"phoneNumber\": \"+1234567890\",\n    \"branch\": \"BRANCH_ID_HERE\"\n}"
+                  },
+                  "url": {
+                    "raw": "{{baseUrl}}/staff",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["staff"]
+                  }
+                }
+              },
+              {
+                "name": "Get all staff",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{baseUrl}}/staff",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["staff"]
+                  }
+                }
+              },
+              {
+                "name": "Get staff by ID",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{baseUrl}}/staff/STAFF_ID_HERE",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["staff", "STAFF_ID_HERE"]
+                  }
+                }
+              },
+              {
+                "name": "Update staff",
+                "request": {
+                  "method": "PUT",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"phoneNumber\": \"+1987654321\",\n    \"status\": \"inactive\"\n}"
+                  },
+                  "url": {
+                    "raw": "{{baseUrl}}/staff/STAFF_ID_HERE",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["staff", "STAFF_ID_HERE"]
+                  }
+                }
+              },
+              {
+                "name": "Delete staff",
+                "request": {
+                  "method": "DELETE",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{baseUrl}}/staff/STAFF_ID_HERE",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["staff", "STAFF_ID_HERE"]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "Reports",
+            "item": [
+              {
+                "name": "Get revenue report",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{baseUrl}}/reports/revenue?startDate=2024-01-01&endDate=2024-03-20",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["reports", "revenue"],
+                    "query": [
+                      {
+                        "key": "startDate",
+                        "value": "2024-01-01"
+                      },
+                      {
+                        "key": "endDate",
+                        "value": "2024-03-20"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "name": "Get usage report",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{baseUrl}}/reports/usage",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["reports", "usage"]
+                  }
+                }
+              },
+              {
+                "name": "Get trends report",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "Bearer {{authToken}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{baseUrl}}/reports/trends",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["reports", "trends"]
+                  }
+                }
+              }
+            ]
+          }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:5000/api/admin"
+        },
+        {
+            "key": "authToken",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUwNzEwZDE0YTdlNjExYjU3ZjI5YzAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzMzMjU3MzcsImV4cCI6MTczNTkxNzczN30.aIITWrI2UYdBhPxIs5PPwDLyPWevEs5Ef9MKdowr0DI"
+        }
+    ]
+}

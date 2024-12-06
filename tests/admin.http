@@ -1,0 +1,168 @@
+@baseUrl = http://localhost:5000/api/admin
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzUwNzEwZDE0YTdlNjExYjU3ZjI5YzAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzMzMjU3MzcsImV4cCI6MTczNTkxNzczN30.aIITWrI2UYdBhPxIs5PPwDLyPWevEs5Ef9MKdowr0DI
+
+### Car Management ###
+
+# Add new car
+POST {{baseUrl}}/cars
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "make": "Toyota",
+    "model": "Camry",
+    "year": 2023,
+    "category": "CATEGORY_ID_HERE",
+    "licensePlate": "ABC123",
+    "branch": "BRANCH_ID_HERE",
+    "dailyRate": 50,
+    "transmission": "automatic",
+    "features": ["GPS", "Bluetooth", "Backup Camera"],
+    "mileage": 5000
+}
+
+# Get all cars
+GET {{baseUrl}}/cars
+Authorization: Bearer {{authToken}}
+
+# Get car by ID
+GET {{baseUrl}}/cars/CAR_ID_HERE
+Authorization: Bearer {{authToken}}
+
+# Update car
+PUT {{baseUrl}}/cars/CAR_ID_HERE
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "dailyRate": 55,
+    "status": "maintenance"
+}
+
+# Delete car
+DELETE {{baseUrl}}/cars/CAR_ID_HERE
+Authorization: Bearer {{authToken}}
+
+### Category Management ###
+
+# Add new category
+POST {{baseUrl}}/categories
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "name": "Luxury",
+    "description": "Premium luxury vehicles",
+    "basePrice": 100
+}
+
+# Get all categories
+GET {{baseUrl}}/categories
+Authorization: Bearer {{authToken}}
+
+# Update category
+PUT {{baseUrl}}/categories/CATEGORY_ID_HERE
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "basePrice": 120,
+    "description": "Updated luxury vehicle description"
+}
+
+# Delete category
+DELETE {{baseUrl}}/categories/CATEGORY_ID_HERE
+Authorization: Bearer {{authToken}}
+
+### Branch Management ###
+
+# Add new branch
+POST {{baseUrl}}/branches
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "name": "Downtown Branch",
+    "address": "123 Main Street",
+    "city": "New York",
+    "contactNumber": "+1234567890",
+    "email": "downtown@carental.com",
+    "coordinates": {
+        "latitude": 40.7128,
+        "longitude": -74.0060
+    }
+}
+
+# Get all branches
+GET {{baseUrl}}/branches
+Authorization: Bearer {{authToken}}
+
+# Get branch by ID
+GET {{baseUrl}}/branches/BRANCH_ID_HERE
+Authorization: Bearer {{authToken}}
+
+# Update branch
+PUT {{baseUrl}}/branches/BRANCH_ID_HERE
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "contactNumber": "+1987654321",
+    "email": "downtown.new@carental.com"
+}
+
+# Delete branch
+DELETE {{baseUrl}}/branches/BRANCH_ID_HERE
+Authorization: Bearer {{authToken}}
+
+### Staff Management ###
+
+# Add new staff
+POST {{baseUrl}}/staff
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@carental.com",
+    "password": "password123",
+    "phoneNumber": "+1234567890",
+    "branch": "BRANCH_ID_HERE"
+}
+
+# Get all staff
+GET {{baseUrl}}/staff
+Authorization: Bearer {{authToken}}
+
+# Get staff by ID
+GET {{baseUrl}}/staff/STAFF_ID_HERE
+Authorization: Bearer {{authToken}}
+
+# Update staff
+PUT {{baseUrl}}/staff/STAFF_ID_HERE
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "phoneNumber": "+1987654321",
+    "status": "inactive"
+}
+
+# Delete staff
+DELETE {{baseUrl}}/staff/STAFF_ID_HERE
+Authorization: Bearer {{authToken}}
+
+### Reports ###
+
+# Get revenue report
+GET {{baseUrl}}/reports/revenue?startDate=2024-01-01&endDate=2024-03-20
+Authorization: Bearer {{authToken}}
+
+# Get usage report
+GET {{baseUrl}}/reports/usage
+Authorization: Bearer {{authToken}}
+
+# Get trends report
+GET {{baseUrl}}/reports/trends
+Authorization: Bearer {{authToken}} 
