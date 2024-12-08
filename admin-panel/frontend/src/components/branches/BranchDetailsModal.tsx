@@ -14,18 +14,11 @@ export default function BranchDetailsModal({ isOpen, onClose, branch, onDelete }
 
   if (!isOpen || !branch) return null;
 
-  const handleDelete = (e: React.MouseEvent) => {
-    if (window.confirm('Are you sure you want to delete this branch?')) {
-      onDelete(branch._id, e);
-      onClose();
-    }
-  };
-
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-[40]" />
-      <div className="fixed inset-0 flex items-center justify-center z-[50] p-4 overflow-y-auto">
-        <div className="bg-white rounded-lg max-w-2xl w-full p-6">
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-40" />
+      <div className="fixed inset-0 flex items-center justify-center z-40 p-4">
+        <div className="bg-white rounded-lg max-w-3xl w-full p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Branch Details</h2>
             <button onClick={onClose}>
@@ -95,7 +88,7 @@ export default function BranchDetailsModal({ isOpen, onClose, branch, onDelete }
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-end space-x-3 pt-4 border-t">
+            <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={() => setShowEditModal(true)}
                 className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
@@ -104,7 +97,7 @@ export default function BranchDetailsModal({ isOpen, onClose, branch, onDelete }
                 Edit
               </button>
               <button
-                onClick={handleDelete}
+                onClick={(e) => onDelete(branch._id, e)}
                 className="flex items-center px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
               >
                 <Trash2 className="w-4 h-4 mr-2" />

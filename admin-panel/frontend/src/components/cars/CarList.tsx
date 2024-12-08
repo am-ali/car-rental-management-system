@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Edit, Trash2 } from 'lucide-react';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import { deleteCar, getCarById } from '../../lib/api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deleteCar } from '../../lib/api';
 import { toast } from 'react-hot-toast';
 import EditCarModal from './EditCarModal';
 import CarDetailsModal from './CarDetailsModal';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 interface Car {
   _id: string;
@@ -22,8 +23,9 @@ interface CarListProps {
 }
 
 export default function CarList({ cars }: CarListProps) {
+  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [editingCar, setEditingCar] = useState<Car | null>(null);
-  const [selectedCarId, setSelectedCarId] = useState<string | null>(null);
+  const [carToDelete, setCarToDelete] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const deleteCarMutation = useMutation({
@@ -31,32 +33,28 @@ export default function CarList({ cars }: CarListProps) {
     onSuccess: () => {
       queryClient.invalidateQueries(['cars']);
       toast.success('Car deleted successfully');
+      setSelectedCar(null); // Close details modal if open
     },
     onError: (error: any) => {
-      console.error('Delete car error:', error);
       toast.error(error.message || 'Failed to delete car');
     },
   });
 
-  const handleDeleteCar = async (carId: string) => {
-    if (window.confirm('Are you sure you want to delete this car?')) {
+  const handleDelete = (carId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCarToDelete(carId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (carToDelete) {
       try {
-        await deleteCarMutation.mutateAsync(carId);
+        await deleteCarMutation.mutateAsync(carToDelete);
       } catch (error) {
         console.error('Error deleting car:', error);
       }
     }
+    setCarToDelete(null);
   };
-
-  const handleEditCar = (car: Car) => {
-    setEditingCar(car);
-  };
-
-  const { data: selectedCar } = useQuery({
-    queryKey: ['car', selectedCarId],
-    queryFn: () => selectedCarId ? getCarById(selectedCarId) : null,
-    enabled: !!selectedCarId
-  });
 
   return (
     <>
@@ -83,7 +81,7 @@ export default function CarList({ cars }: CarListProps) {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {cars?.map((car) => (
-              <tr key={car._id} onClick={() => setSelectedCarId(car._id)} className="cursor-pointer hover:bg-gray-50">
+              <tr key={car._id} onClick={() => setSelectedCar(car)} className="cursor-pointer hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-16 w-24 mr-4">
@@ -118,13 +116,13 @@ export default function CarList({ cars }: CarListProps) {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button 
-                    onClick={() => handleEditCar(car)}
+                    onClick={() => setEditingCar(car)}
                     className="text-blue-600 hover:text-blue-900 mr-3"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button 
-                    onClick={() => handleDeleteCar(car._id)}
+                    onClick={(e) => handleDelete(car._id, e)}
                     className="text-red-600 hover:text-red-900"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -136,18 +134,28 @@ export default function CarList({ cars }: CarListProps) {
         </table>
       </div>
 
-      <EditCarModal
-        isOpen={!!editingCar}
-        onClose={() => setEditingCar(null)}
-        car={editingCar}
+      <ConfirmDialog
+        isOpen={!!carToDelete}
+        onClose={() => setCarToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Car"
+        message="Are you sure you want to delete this car? This action cannot be undone."
       />
 
-      {selectedCarId && (
+      {selectedCar && (
         <CarDetailsModal
-          isOpen={!!selectedCarId}
-          onClose={() => setSelectedCarId(null)}
-          car={selectedCar?.data}
-          onDelete={handleDeleteCar}
+          isOpen={!!selectedCar}
+          onClose={() => setSelectedCar(null)}
+          car={selectedCar}
+          onDelete={handleDelete}
+        />
+      )}
+
+      {editingCar && (
+        <EditCarModal
+          isOpen={!!editingCar}
+          onClose={() => setEditingCar(null)}
+          car={editingCar}
         />
       )}
     </>

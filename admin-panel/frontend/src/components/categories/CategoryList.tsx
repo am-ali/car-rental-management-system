@@ -5,6 +5,7 @@ import { deleteCategory } from '../../lib/api';
 import { toast } from 'react-hot-toast';
 import EditCategoryModal from './EditCategoryModal';
 import CategoryDetailsModal from './CategoryDetailsModal';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 interface Category {
   _id: string;
@@ -22,6 +23,7 @@ interface CategoryListProps {
 export default function CategoryList({ categories }: CategoryListProps) {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const deleteCategoryMutation = useMutation({
@@ -37,13 +39,19 @@ export default function CategoryList({ categories }: CategoryListProps) {
 
   const handleDelete = async (categoryId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this category?')) {
+    setCategoryToDelete(categoryId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (categoryToDelete) {
       try {
-        await deleteCategoryMutation.mutateAsync(categoryId);
+        await deleteCategoryMutation.mutateAsync(categoryToDelete);
+        setSelectedCategory(null); // Close details modal if open
       } catch (error) {
         console.error('Error deleting category:', error);
       }
     }
+    setCategoryToDelete(null);
   };
 
   return (
@@ -104,6 +112,14 @@ export default function CategoryList({ categories }: CategoryListProps) {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        isOpen={!!categoryToDelete}
+        onClose={() => setCategoryToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Category"
+        message="Are you sure you want to delete this category? This action cannot be undone."
+      />
 
       {selectedCategory && (
         <CategoryDetailsModal

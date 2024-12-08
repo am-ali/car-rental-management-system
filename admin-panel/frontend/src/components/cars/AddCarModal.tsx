@@ -151,7 +151,8 @@ export default function AddCarModal({ isOpen, onClose }: AddCarModalProps) {
         'licensePlate',
         'branch',
         'dailyRate',
-        'transmission'
+        'transmission',
+        'year'
       ];
 
       const missingFields = requiredFields.filter(field => !data[field]);
@@ -159,31 +160,33 @@ export default function AddCarModal({ isOpen, onClose }: AddCarModalProps) {
         throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
       }
 
-      // Convert other features string to array and combine with checked features
-      const otherFeatures = data.otherFeatures
-        ? data.otherFeatures.split(',').map((f: string) => f.trim()).filter(Boolean)
-        : [];
-      
-      const allFeatures = [
-        ...(data.features || []),
-        ...otherFeatures
-      ];
+      // Create the request body as a regular object instead of FormData
+      const requestBody = {
+        // Add all the regular fields
+        ...Object.fromEntries(
+          Object.entries(data).filter(([key, value]) => 
+            key !== 'otherFeatures' && 
+            key !== 'image' && 
+            value !== undefined && 
+            value !== ''
+          )
+        ),
+        
+        // Add features
+        features: [
+          ...(data.features || []),
+          ...(data.otherFeatures 
+            ? data.otherFeatures.split(',').map((f: string) => f.trim()).filter(Boolean)
+            : []
+          )
+        ],
 
-      // Create form data without images
-      const formData = new FormData();
-      
-      // Add all the regular fields
-      Object.keys(data).forEach(key => {
-        if (key !== 'otherFeatures' && key !== 'image' && data[key] !== undefined && data[key] !== '') {
-          formData.append(key, data[key].toString());
-        }
-      });
+        // Add images
+        images: imagePreview
+      };
 
-      // Add the combined features as JSON string
-      formData.append('features', JSON.stringify(allFeatures));
-
-      // Submit the form data
-      await addCarMutation.mutateAsync(formData);
+      // Submit the request
+      await addCarMutation.mutateAsync(requestBody);
       
       toast.success('Car added successfully');
       reset();
@@ -355,7 +358,7 @@ export default function AddCarModal({ isOpen, onClose }: AddCarModalProps) {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Year</label>
+                    <label className="block text-sm font-medium text-gray-700">Year *</label>
                     <input
                       type="number"
                       {...register('year', { 

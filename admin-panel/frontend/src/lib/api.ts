@@ -45,47 +45,13 @@ export const searchCar = async (query: string) => {
   return data;
 };
 
-export const addCar = async (carData: any) => {
-  try {
-    let processedData: any = {};
-    
-    if (carData instanceof FormData) {
-      // Extract all regular fields
-      for (let [key, value] of carData.entries()) {
-        try {
-          processedData[key] = JSON.parse(value as string);
-        } catch {
-          processedData[key] = value;
-        }
-      }
-
-      // Fetch images based on make and model
-      try {
-        const imagesResult = await getCarImages(processedData.make, processedData.model);
-        if (imagesResult.success && imagesResult.data) {
-          processedData.images = imagesResult.data;
-        }
-      } catch (error) {
-        console.error('Failed to fetch car images:', error);
-        processedData.images = []; // Set empty array if image fetch fails
-      }
-    } else {
-      processedData = carData;
-    }
-
-    const { data } = await api.post('/admin/cars', processedData, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-    
-    console.log('Add car response:', data);
-    return data;
-  } catch (error: any) {
-    console.error('Add car error:', error.response?.data || error);
-    throw new Error(error.response?.data?.error || error.message || 'Failed to add car');
-  }
+export const addCar = async (data: any) => {
+  const response = await api.post('/admin/cars', data, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return response.data;
 };
 
 export const fetchBranches = async () => {
@@ -144,12 +110,22 @@ export const addStaff = async (staffData: any) => {
 };
 
 export const searchVehicle = async (plateNumber: string, countryCode: string) => {
-  const {data} = await api.get(`/admin/cars/search?plateNumber=${plateNumber}&countryCode=${countryCode}`);
+  const { data } = await api.get(`/admin/cars/search`, {
+    params: {
+      plateNumber,
+      countryCode,
+    },
+  });
   return data;
 };
 
 export const getCarImages = async (make: string, model: string) => {
-  const { data } = await api.get(`/admin/cars/images?make=${make}&model=${model}`);
+  const { data } = await api.get(`/admin/cars/images`, {
+    params: {
+      make,
+      model,
+    },
+  });
   return data;
 };
 
@@ -183,16 +159,6 @@ export const getStaffById = async (staffId: string) => {
   return data;
 };
 
-// Add these interfaces
-interface Category {
-  _id: string;
-  name: string;
-}
-
-interface Branch {
-  _id: string;
-  name: string;
-}
 
 // Add these new functions
 export const getRevenueReport = async (startDate: string, endDate: string) => {

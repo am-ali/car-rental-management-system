@@ -5,6 +5,7 @@ import { deleteBranch, getBranchById } from '../../lib/api';
 import { toast } from 'react-hot-toast';
 import EditBranchModal from './EditBranchModal';
 import BranchDetailsModal from './BranchDetailsModal';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 interface Branch {
   _id: string;
@@ -26,6 +27,7 @@ interface BranchListProps {
 export default function BranchList({ branches }: BranchListProps) {
   const [selectedBranchId, setSelectedBranchId] = useState<string | null>(null);
   const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
+  const [branchToDelete, setBranchToDelete] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { data: selectedBranch } = useQuery({
@@ -47,13 +49,19 @@ export default function BranchList({ branches }: BranchListProps) {
 
   const handleDelete = async (branchId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this branch?')) {
+    setBranchToDelete(branchId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (branchToDelete) {
       try {
-        await deleteBranchMutation.mutateAsync(branchId);
+        await deleteBranchMutation.mutateAsync(branchToDelete);
+        setSelectedBranchId(null); // Close details modal if open
       } catch (error) {
         console.error('Error deleting branch:', error);
       }
     }
+    setBranchToDelete(null);
   };
 
   return (
@@ -118,6 +126,14 @@ export default function BranchList({ branches }: BranchListProps) {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        isOpen={!!branchToDelete}
+        onClose={() => setBranchToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Branch"
+        message="Are you sure you want to delete this branch? This action cannot be undone."
+      />
 
       {selectedBranchId && (
         <BranchDetailsModal

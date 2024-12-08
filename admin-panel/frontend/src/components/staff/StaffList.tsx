@@ -1,10 +1,11 @@
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Mail } from 'lucide-react';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { deleteStaff, getStaffById } from '../../lib/api';
 import { toast } from 'react-hot-toast';
 import { useState } from 'react';
 import EditStaffModal from './EditStaffModal';
 import StaffDetailsModal from './StaffDetailsModal';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 interface StaffMember {
   _id: string;
@@ -26,6 +27,7 @@ export default function StaffList({ staff }: StaffListProps) {
   const queryClient = useQueryClient();
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
+  const [staffToDelete, setStaffToDelete] = useState<string | null>(null);
 
   const deleteStaffMutation = useMutation({
     mutationFn: deleteStaff,
@@ -47,14 +49,19 @@ export default function StaffList({ staff }: StaffListProps) {
 
   const handleDelete = async (staffId: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent event bubbling if you have click handlers on parent elements
-    
-    if (window.confirm('Are you sure you want to delete this staff member?')) {
+    setStaffToDelete(staffId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (staffToDelete) {
       try {
-        await deleteStaffMutation.mutateAsync(staffId);
+        await deleteStaffMutation.mutateAsync(staffToDelete);
+        setSelectedStaffId(null); // Close details modal if open
       } catch (error) {
         console.error('Error deleting staff:', error);
       }
     }
+    setStaffToDelete(null);
   };
 
   const handleEdit = (member: StaffMember, e: React.MouseEvent) => {
@@ -133,13 +140,13 @@ export default function StaffList({ staff }: StaffListProps) {
         </table>
       </div>
 
-      {editingStaff && (
-        <EditStaffModal
-          isOpen={!!editingStaff}
-          onClose={() => setEditingStaff(null)}
-          staff={editingStaff}
-        />
-      )}
+      <ConfirmDialog
+        isOpen={!!staffToDelete}
+        onClose={() => setStaffToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Staff Member"
+        message="Are you sure you want to delete this staff member? This action cannot be undone."
+      />
 
       {selectedStaffId && (
         <StaffDetailsModal
@@ -147,6 +154,14 @@ export default function StaffList({ staff }: StaffListProps) {
           onClose={() => setSelectedStaffId(null)}
           staff={selectedStaff?.data}
           onDelete={handleDelete}
+        />
+      )}
+
+      {editingStaff && (
+        <EditStaffModal
+          isOpen={!!editingStaff}
+          onClose={() => setEditingStaff(null)}
+          staff={editingStaff}
         />
       )}
     </>
