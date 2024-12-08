@@ -1,0 +1,8 @@
+# Node.js modules
+/admin-panel/backend/node_modules/
+/admin-panel/frontend/node_modules/
+
+
+# Environment variables
+/admin-panel/backend/.env
+/admin-panel/frontend/.env
