@@ -17,15 +17,16 @@ export default function Login() {
       setLoading(true);
       const response = await login(data.email, data.password);
       
-      if (response.success) {
+      if (response?.success) {
         setAuth(response.data);
+        toast.success('Login successful');
         navigate('/');
       } else {
-        toast.error('Login failed');
+        toast.error(response?.message || 'Login failed');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
-      toast.error('Invalid credentials');
+      toast.error(error?.response?.data?.message || 'Connection error. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -58,9 +59,9 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Loading...' : 'Sign In'}
+            {loading ? 'Please wait...' : 'Sign In'}
           </button>
         </form>
       </div>

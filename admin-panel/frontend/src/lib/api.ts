@@ -31,8 +31,17 @@ api.interceptors.response.use(
 );
 
 export const login = async (email: string, password: string) => {
-  const { data } = await api.post('/auth/login', { email, password });
-  return data;
+  try {
+    const { data } = await api.post('/auth/login', { email, password }, {
+      timeout: 10000 // 10 seconds timeout
+    });
+    return data;
+  } catch (error: any) {
+    if (error.code === 'ECONNABORTED') {
+      throw new Error('Login request timed out. Please try again.');
+    }
+    throw error;
+  }
 };
 
 export const fetchCars = async () => {
