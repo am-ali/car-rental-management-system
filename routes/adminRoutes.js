@@ -7,6 +7,8 @@ const { authenticateAdmin } = require('../middleware/auth');
 router.use(authenticateAdmin);
 
 // Car Management Routes
+router.get('/cars/search', adminController.searchVehicle);
+router.get('/cars/images', adminController.getCarImages);
 router.post('/cars', adminController.addCar);
 router.get('/cars', adminController.getAllCars);
 router.get('/cars/:carId', adminController.getCarById);

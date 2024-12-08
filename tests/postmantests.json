@@ -10,7 +10,7 @@
             "name": "Car Management",
             "item": [
                 {
-                    "name": "Add new car",
+                    "name": "Add new car (with API data)",
                     "request": {
                         "method": "POST",
                         "header": [
@@ -27,7 +27,34 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"make\": \"Toyota\",\n    \"model\": \"Camry\",\n    \"year\": 2023,\n    \"category\": \"CATEGORY_ID_HERE\",\n    \"licensePlate\": \"ABC123\",\n    \"branch\": \"BRANCH_ID_HERE\",\n    \"dailyRate\": 50,\n    \"transmission\": \"automatic\",\n    \"features\": [\"GPS\", \"Bluetooth\", \"Backup Camera\"],\n    \"mileage\": 5000\n}"
+                            "raw": "{\n    \"make\": \"Toyota\",\n    \"model\": \"Camry\",\n    \"year\": 2023,\n    \"category\": \"CATEGORY_ID_HERE\",\n    \"licensePlate\": \"ABC123\",\n    \"branch\": \"BRANCH_ID_HERE\",\n    \"dailyRate\": 50,\n    \"transmission\": \"automatic\",\n    \"features\": [\"GPS\", \"Bluetooth\", \"Backup Camera\"],\n    \"mileage\": 5000,\n    \"carApiId\": \"CAR_API_ID_HERE\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/cars",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["cars"]
+                        }
+                    }
+                },
+                {
+                    "name": "Add new car (manual entry)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"make\": \"Toyota\",\n    \"model\": \"Camry\",\n    \"year\": 2023,\n    \"category\": \"CATEGORY_ID_HERE\",\n    \"licensePlate\": \"ABC123\",\n    \"branch\": \"BRANCH_ID_HERE\",\n    \"dailyRate\": 50,\n    \"transmission\": \"automatic\",\n    \"features\": [\"GPS\", \"Bluetooth\", \"Backup Camera\"],\n    \"mileage\": 5000,\n    \"engineSize\": \"2.5L\",\n    \"fuelType\": \"gasoline\",\n    \"doors\": 4,\n    \"seats\": 5\n}"
                         },
                         "url": {
                             "raw": "{{baseUrl}}/cars",
@@ -116,6 +143,50 @@
                             "path": ["cars", "CAR_ID_HERE"]
                         }
                     }
+                },
+                {
+                    "name": "Search cars",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/cars/search?query=Toyota Camry",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["cars", "search"],
+                            "query": [
+                                {
+                                    "key": "query",
+                                    "value": "Toyota Camry"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get car details",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{authToken}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/cars/details/CAR_API_ID_HERE",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["cars", "details", "CAR_API_ID_HERE"]
+                        }
+                    },
+                    "response": []
                 }
             ]
         },

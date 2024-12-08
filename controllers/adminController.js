@@ -6,90 +6,171 @@ const Booking = require('../models/Booking');
 const Payment = require('../models/Payment');
 const axios = require('axios');
 
-// Utility function to fetch car details from CarAPI
-async function fetchCarDetails(make, model, year) {
+
+// Utility function to fetch car details from CarXE API
+async function fetchCarDetails(plateNumber, countryCode) {
     try {
-        const response = await axios.get(`https://api.carapi.app/api/models`, {
-            headers: {
-                'Authorization': `Bearer ${process.env.CAR_API_KEY}`
-            },
+        console.log('Fetching car details for:', plateNumber, countryCode);
+        const encodedPlate = encodeURIComponent(plateNumber);
+        const response = await axios.get(`https://api.carsxe.com/v2/platedecoder`, {
             params: {
-                make: make,
-                model: model,
-                year: year
+                key: process.env.CARXE_API_KEY,
+                plate: encodedPlate,
+                country: countryCode
             }
         });
+        console.log('API Response:', response.data);
         return response.data;
     } catch (error) {
-        console.error('Error fetching car details:', error);
-        return null;
+        console.error('Error fetching car details:', error.response?.data || error.message);
+        throw error;
     }
 }
 
 // Utility function to fetch car images from CarXE
-async function fetchCarImages(make, model, year) {
+async function fetchCarImages(make, model) {
     try {
-        const response = await axios.get(`https://api.carxe.com/images`, {
-            headers: {
-                'Authorization': `Bearer ${process.env.CARXE_API_KEY}`
-            },
+        console.log('Fetching images for:', make, model);
+        const encodedMake = encodeURIComponent(make);
+        const encodedModel = encodeURIComponent(model);
+        const response = await axios.get(`https://api.carsxe.com/images`, {
             params: {
-                make: make,
-                model: model,
-                year: year
+                key: process.env.CARXE_API_KEY,
+                make: encodedMake,
+                model: encodedModel
             }
         });
+        console.log('Images API Response:', response.data);
         return response.data.images;
     } catch (error) {
-        console.error('Error fetching car images:', error);
+        console.error('Error fetching car images:', error.response?.data || error.message);
         return [];
     }
 }
 
-// Car Management Controllers
-exports.addCar = async (req, res) => {
+// Search endpoint
+exports.searchVehicle = async (req, res) => {
     try {
-        const { make, model, year } = req.body;
-
-        // Attempt to fetch car details from CarAPI
-        let carDetails = await fetchCarDetails(make, model, year);
-
-        // If car details are not found, use manual entry
-        if (!carDetails) {
-            carDetails = {
-                engine_size: req.body.engineSize,
-                fuel_type: req.body.fuelType,
-                doors: req.body.doors,
-                seats: req.body.seats
-            };
+        const { plateNumber, countryCode } = req.query;
+        console.log('Searching vehicle with plate:', plateNumber, 'country:', countryCode);
+        
+        if (!plateNumber || !countryCode) {
+            return res.status(400).json({
+                success: false,
+                error: 'Plate number and country code are required'
+            });
         }
 
-        // Fetch car images from CarXE
-        const carImages = await fetchCarImages(make, model, year);
+        const vehicleDetails = await fetchCarDetails(plateNumber, countryCode);
+        
+        // If vehicle found, fetch images
+        if (vehicleDetails) {
+            const images = await fetchCarImages(vehicleDetails.make, vehicleDetails.model);
+            vehicleDetails.images = images;
+        }
 
-        // Combine API data with request data
-        const carData = {
-            ...req.body,
-            images: carImages,
-            engineSize: carDetails.engine_size,
-            fuelType: carDetails.fuel_type,
-            doors: carDetails.doors,
-            seats: carDetails.seats,
-            carApiData: carDetails // Store complete API response
-        };
+        res.status(200).json({
+            success: true,
+            data: vehicleDetails
+        });
+
+    } catch (error) {
+        console.error('Search Error:', error.response?.data || error.message);
+        res.status(error.response?.status || 500).json({
+            success: false,
+            error: error.response?.data?.message || error.message
+        });
+    }
+};
+
+// Get car images endpoint
+exports.getCarImages = async (req, res) => {
+    try {
+        const { make, model } = req.query;
+        
+        if (!make || !model) {
+            return res.status(400).json({
+                success: false,
+                error: 'Make and model are required'
+            });
+        }
+
+        const response = await fetchCarImages(make, model);
+        
+        // Extract image links and append .jpg if needed
+        const imageLinks = response.map(image => {
+            const link = image.link;
+            return link.toLowerCase().endsWith('.jpg') ? link : `${link}.jpg`;
+        });
+
+        res.status(200).json({
+            success: true,
+            data: imageLinks
+        });
+
+    } catch (error) {
+        console.error('Error getting car images:', error.response?.data || error.message);
+        res.status(error.response?.status || 500).json({
+            success: false,
+            error: error.response?.data?.message || error.message
+        });
+    }
+};
+
+// Add car with manual entry
+exports.addCar = async (req, res) => {
+    try {
+        const {
+            make,
+            model,
+            year,
+            category,
+            licensePlate,
+            branch,
+            dailyRate,
+            transmission,
+            features,
+            mileage,
+            images,
+            ...otherDetails
+        } = req.body;
+
+        // Validate required fields
+        if (!make || !model || !category || !licensePlate || !branch || !dailyRate || !transmission) {
+            return res.status(400).json({
+                success: false,
+                error: 'Missing required fields'
+            });
+        }
 
         // Create and save the new car
-        const newCar = new Car(carData);
+        const newCar = new Car({
+            make,
+            model,
+            year,
+            category,
+            licensePlate,
+            branch,
+            dailyRate,
+            transmission,
+            features,
+            mileage,
+            images: images || [], // If no images provided, default to empty array
+            ...otherDetails
+        });
+        
         await newCar.save();
 
-        res.status(201).json({ 
-            success: true, 
-            data: newCar 
+        res.status(201).json({
+            success: true,
+            data: newCar
         });
+
     } catch (error) {
-        res.status(400).json({ 
-            success: false, 
-            error: error.message 
+        console.error('Error adding car:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
         });
     }
 };
@@ -398,4 +479,4 @@ exports.getTrendsReport = async (req, res) => {
     } catch (error) {
         res.status(400).json({ success: false, error: error.message });
     }
-}; 
+};
