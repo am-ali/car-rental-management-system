@@ -1,1 +1,1 @@
-yo fone linging
+yo fone linging , big boi pikup yo fone
