@@ -18,11 +18,6 @@ app.set('trust proxy', 1);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true
-}));
-
 // Logger middleware
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
