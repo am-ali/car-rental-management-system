@@ -10,6 +10,7 @@ router.post('/login', async (req, res) => {
 
     try {
         // Check if user exists (include password for comparison)
+        console.log('login for:',email);
         const user = await User.findOne({ email, role: 'admin' });
         if (!user) {
             return res.status(401).json({ 
